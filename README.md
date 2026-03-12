@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OPEN BCRA - Régimen de Transparencia 🇦🇷
 
-## Getting Started
+Una plataforma moderna, rápida y detallada para consultar y comparar productos financieros en Argentina, utilizando datos oficiales del **Banco Central de la República Argentina (BCRA)**.
 
-First, run the development server:
+![Versión](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
+![Tailwind](https://img.shields.io/badge/Tailwind-CSS-38B2AC.svg)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🎯 Propósito
+Este proyecto democratiza el acceso a la información financiera, permitiendo a los usuarios comparar tasas de plazos fijos, costos de tarjetas de crédito y condiciones de préstamos de manera clara y profesional.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Características Principales
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 🏦 **Directorio de Entidades:** Listado completo de bancos y PSPs con sus respectivos logos e identidad visual.
+- 📊 **Dashboard de Plazos Fijos:** Comparativa en tiempo real con filtros por moneda (Pesos, UVA, USD) y ordenamiento inteligente por mejor tasa (TEA).
+- 🔄 **Comparador Cara a Cara:** Herramienta interactiva para enfrentar dos entidades y determinar cuál ofrece mejores condiciones según el producto.
+- 📋 **Detalle Técnico Exhaustivo:** Acceso a datos de "letra chica" como CFT, cargos por cancelación, requisitos de ingreso y tipos de tasa.
+- 🔍 **Consulta Crediticia:** Integración con los servicios de deudores y cheques rechazados del BCRA.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Stack Tecnológico
 
-## Learn More
+- **Framework:** Next.js 15 (App Router)
+- **Lenguaje:** TypeScript
+- **Estilos:** Tailwind CSS
+- **Componentes de Cliente:** Framer Motion (Animaciones)
+- **Iconografía:** Lucide React
+- **Fuentes:** Geist (Sans & Mono)
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Instalación y Desarrollo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Instalar dependencias:
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Iniciar el servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+3. Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📂 Estructura del Proyecto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app`: Rutas y páginas de la aplicación.
+- `src/components`: Componentes reutilizables y lógica de cliente.
+- `src/services`: Integración con la API de Transparencia del BCRA.
+- `src/data`: Mapeos de logos y constantes de entidades.
+- `public/logos`: Repositorio de logos bancarios en formato SVG.
+
+## 📄 Documentación Adicional
+Para más detalles sobre las funcionalidades implementadas y la arquitectura técnica, consulte la carpeta `/docs`.
+
+---
+*Datos provistos por el Régimen de Transparencia del BCRA.*
