@@ -5,7 +5,7 @@ import {
   CreditCard, PiggyBank, HandCoins, DollarSign, Percent, 
   Wallet, Car, Home, Info, UserCheck, Briefcase, Clock, 
   Ban, Box, CheckCircle2, ShieldCheck, Filter, Calendar,
-  ShieldAlert, Landmark, Zap, MapPin, HelpCircle
+  Landmark, Zap, MapPin
 } from 'lucide-react';
 import { PlazoFijo, CajaAhorro, TarjetaCredito, Prestamo, PaqueteProducto } from '@/types/bcra';
 
@@ -56,8 +56,6 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
     </section>
   );
 
-  // --- CARDS DETALLADAS ---
-
   const PrestamoCard = ({ p, icon: Icon, type }: { p: Prestamo, icon: any, type: string }) => (
     <div className="bg-slate-50/50 p-6 rounded-xl border border-slate-100 hover:bg-white hover:border-blue-200 transition-all shadow-sm group/item flex flex-col justify-between">
       <div className="space-y-6">
@@ -72,7 +70,7 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-display font-black text-slate-900 leading-none">{p.tasaEfectivaAnualMaxima?.toFixed(2)}%</p>
+            <p className="text-2xl font-display font-black text-slate-900 leading-none">{(p.tasaEfectivaAnualMaxima ?? 0).toFixed(2)}%</p>
             <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">TEA Máx</p>
           </div>
         </div>
@@ -86,10 +84,10 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
             <p className="text-[9px] font-black uppercase text-slate-400">Plazo Máx</p>
             <p className="text-sm font-bold text-slate-800">{p.plazoMaximoOtorgable} meses</p>
           </div>
-          {p.costoFinancieroEfectivoTotalMaximo !== undefined && (
+          {p.costoFinancieroEfectivoTotalMaximo !== undefined && p.costoFinancieroEfectivoTotalMaximo !== null && (
             <div className="space-y-1">
               <p className="text-[9px] font-black uppercase text-red-400">CFT Máximo</p>
-              <p className="text-sm font-bold text-red-600">{p.costoFinancieroEfectivoTotalMaximo?.toFixed(2)}%</p>
+              <p className="text-sm font-bold text-red-600">{p.costoFinancieroEfectivoTotalMaximo.toFixed(2)}%</p>
             </div>
           )}
           {p.tipoTasa && (
@@ -100,25 +98,31 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
           )}
         </div>
 
-        {(p.ingresoMinimoMensual || p.antiguedadLaboralMinimaMeses || p.relacionCuotaIngreso) && (
+        {((p.ingresoMinimoMensual ?? 0) > 0 || (p.antiguedadLaboralMinimaMeses ?? 0) > 0 || (p.relacionCuotaIngreso ?? 0) > 0) && (
           <div className="pt-4 border-t border-slate-100 grid grid-cols-3 gap-2">
-            <div className="text-center">
-              <p className="text-[8px] font-black uppercase text-slate-400">Ingreso</p>
-              <p className="text-[10px] font-bold text-slate-700">${safeLocale(p.ingresoMinimoMensual)}</p>
-            </div>
-            <div className="text-center">
-              <p className="text-[8px] font-black uppercase text-slate-400">Antig.</p>
-              <p className="text-[10px] font-bold text-slate-700">{p.antiguedadLaboralMinimaMeses}m</p>
-            </div>
-            <div className="text-center">
-              <p className="text-[8px] font-black uppercase text-slate-400">Cuota/Ing</p>
-              <p className="text-[10px] font-bold text-slate-700">{p.relacionCuotaIngreso}%</p>
-            </div>
+            {(p.ingresoMinimoMensual ?? 0) > 0 && (
+              <div className="text-center">
+                <p className="text-[8px] font-black uppercase text-slate-400">Ingreso</p>
+                <p className="text-[10px] font-bold text-slate-700">${safeLocale(p.ingresoMinimoMensual)}</p>
+              </div>
+            )}
+            {(p.antiguedadLaboralMinimaMeses ?? 0) > 0 && (
+              <div className="text-center">
+                <p className="text-[8px] font-black uppercase text-slate-400">Antig.</p>
+                <p className="text-[10px] font-bold text-slate-700">{p.antiguedadLaboralMinimaMeses}m</p>
+              </div>
+            )}
+            {(p.relacionCuotaIngreso ?? 0) > 0 && (
+              <div className="text-center">
+                <p className="text-[8px] font-black uppercase text-slate-400">Cuota/Ing</p>
+                <p className="text-[10px] font-bold text-slate-700">{p.relacionCuotaIngreso}%</p>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {p.cargoMaximoCancelacionAnticipada > 0 && (
+      {(p.cargoMaximoCancelacionAnticipada ?? 0) > 0 && (
         <div className="mt-6 flex items-center gap-2 px-3 py-2 bg-amber-50 rounded-lg border border-amber-100">
           <Ban size={12} className="text-amber-600" />
           <p className="text-[9px] font-bold text-amber-700 uppercase tracking-tight">
@@ -143,7 +147,7 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-display font-black text-slate-900 leading-none">{pf.tasaEfectivaAnualMinima?.toFixed(2)}%</p>
+            <p className="text-2xl font-display font-black text-slate-900 leading-none">{(pf.tasaEfectivaAnualMinima ?? 0).toFixed(2)}%</p>
             <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">TEA</p>
           </div>
         </div>
@@ -194,7 +198,7 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-display font-black text-slate-900 leading-none">{tc.tasaEfectivaAnualMaximaFinanciacion?.toFixed(2)}%</p>
+            <p className="text-2xl font-display font-black text-slate-900 leading-none">{(tc.tasaEfectivaAnualMaximaFinanciacion ?? 0).toFixed(2)}%</p>
             <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">TEA Finan.</p>
           </div>
         </div>
@@ -208,13 +212,13 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
             <p className="text-[9px] font-black uppercase text-slate-400">Renovación</p>
             <p className="text-sm font-bold text-slate-800">${safeLocale(tc.comisionMaximaRenovacion)}</p>
           </div>
-          {tc.tasaEfectivaAnualMaximaAdelantoEfectivo > 0 && (
+          {(tc.tasaEfectivaAnualMaximaAdelantoEfectivo ?? 0) > 0 && (
             <div className="space-y-1">
               <p className="text-[9px] font-black uppercase text-slate-400">Adelanto TEA</p>
-              <p className="text-sm font-bold text-slate-700">{tc.tasaEfectivaAnualMaximaAdelantoEfectivo?.toFixed(2)}%</p>
+              <p className="text-sm font-bold text-slate-700">{(tc.tasaEfectivaAnualMaximaAdelantoEfectivo ?? 0).toFixed(2)}%</p>
             </div>
           )}
-          {tc.ingresoMinimoMensual > 0 && (
+          {(tc.ingresoMinimoMensual ?? 0) > 0 && (
             <div className="space-y-1 text-right">
               <p className="text-[9px] font-black uppercase text-slate-400">Ingreso Mín</p>
               <p className="text-sm font-bold text-slate-800">${safeLocale(tc.ingresoMinimoMensual)}</p>
@@ -222,15 +226,15 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
           )}
         </div>
       </div>
-      {(tc.antiguedadLaboralMinimaMeses || tc.edadMaximaSolicitada) && (
+      {((tc.antiguedadLaboralMinimaMeses ?? 0) > 0 || (tc.edadMaximaSolicitada ?? 0) > 0) && (
         <div className="mt-6 pt-4 border-t border-slate-100 flex justify-around text-center">
-          {tc.antiguedadLaboralMinimaMeses > 0 && (
+          {(tc.antiguedadLaboralMinimaMeses ?? 0) > 0 && (
             <div>
               <p className="text-[8px] font-black uppercase text-slate-400">Antigüedad</p>
               <p className="text-[10px] font-bold text-slate-700">{tc.antiguedadLaboralMinimaMeses}m</p>
             </div>
           )}
-          {tc.edadMaximaSolicitada > 0 && (
+          {(tc.edadMaximaSolicitada ?? 0) > 0 && (
             <div>
               <p className="text-[8px] font-black uppercase text-slate-400">Edad Máx</p>
               <p className="text-[10px] font-bold text-slate-700">{tc.edadMaximaSolicitada}a</p>
@@ -266,7 +270,7 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          {pq.ingresoMinimoMensual > 0 && (
+          {(pq.ingresoMinimoMensual ?? 0) > 0 && (
             <div className="space-y-1">
               <p className="text-[9px] font-black uppercase text-slate-400">Ingreso</p>
               <p className="text-sm font-bold text-slate-800">${safeLocale(pq.ingresoMinimoMensual)}</p>
