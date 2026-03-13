@@ -112,25 +112,11 @@ export async function getCotizaciones() {
 
 export async function getDeudaHistorica(identificacion: string): Promise<DeudaHistoricaResponse | null> {
   try {
-    const url = `${DEUDORES_URL}/Deudas/Historica/${identificacion}`;
-    console.log(`Fetching Historical Debt from: ${url}`);
+    const url = `${DEUDORES_URL}/Deudas/Historicas/${identificacion}`;
     const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) {
-      console.error(`Historical Debt API error: ${response.status}`);
-      return null;
-    }
+    if (!response.ok) return null;
     const data = await response.json();
-    console.log('Historical Debt API response:', JSON.stringify(data).substring(0, 200));
-    
-    // El BCRA a veces devuelve los datos directamente en el objeto o dentro de 'results'
-    const results = data.results || (data.identificacion ? data : null);
-    
-    if (results && results.periodos) {
-       return results;
-    }
-    
-    console.warn('Historical Debt: No periods found in response');
-    return null;
+    return data.results || (data.identificacion ? data : null);
   } catch (error) {
     console.error('Deuda Historica fetch error:', error);
     return null;
