@@ -92,10 +92,9 @@ export interface DeudaItem {
 }
 
 export interface DeudorResponse {
-  identificacion: string;
+  identificacion: string | number;
   denominacion: string;
-  periodo: string;
-  deudas: DeudaItem[];
+  periodos: DeudaHistoricaPeriodo[];
 }
 
 export interface DeudaHistoricaItem {

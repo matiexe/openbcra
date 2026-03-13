@@ -46,7 +46,18 @@ export default function ConsultaPage() {
 
       if (deuda) setResultDeuda(deuda);
       if (cheques) setResultCheques(cheques);
-      if (historico) setResultHistorico(historico);
+      if (historico) {
+        setResultHistorico(historico);
+        // Si no hay deuda actual pero sí hay historial, usamos la denominación del historial para el header
+        if (!deuda && historico.denominacion) {
+          setResultDeuda({
+            identificacion: identificacion,
+            denominacion: historico.denominacion,
+            periodo: '',
+            deudas: []
+          });
+        }
+      }
 
       if (!deuda && !cheques && !historico) {
         setError('No se encontraron registros para la identificación ingresada.');
@@ -172,7 +183,7 @@ export default function ConsultaPage() {
             {/* Contenido de Deuda */}
             {tab === 'deuda' && (
               <div className="space-y-6">
-                {resultDeuda?.deudas && resultDeuda.deudas.length > 0 ? (
+                {resultDeuda?.periodos && resultDeuda.periodos.length > 0 ? (
                   <div className="bg-white border border-slate-200 rounded-ux shadow-sm overflow-hidden">
                     {/* Desktop Table */}
                     <table className="w-full text-left hidden md:table">
@@ -184,7 +195,7 @@ export default function ConsultaPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {resultDeuda.deudas.map((d, i) => (
+                        {resultDeuda.periodos[0].entidades.map((d, i) => (
                           <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
                             <td className="px-8 py-6">
                                <div className="flex items-center gap-3">
@@ -207,7 +218,7 @@ export default function ConsultaPage() {
 
                     {/* Mobile List */}
                     <div className="md:hidden divide-y divide-slate-100">
-                       {resultDeuda.deudas.map((d, i) => (
+                       {resultDeuda.periodos[0].entidades.map((d, i) => (
                          <div key={i} className="p-6 space-y-4">
                             <div className="flex justify-between items-start gap-4">
                                <div className="flex-1">

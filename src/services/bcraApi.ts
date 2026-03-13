@@ -4,7 +4,7 @@ import { PlazoFijo, CajaAhorro, Prestamo, TarjetaCredito, PaqueteProducto, Deudo
 
 const BASE_URL = 'https://api.bcra.gob.ar/transparencia/v1.0';
 // ... rest remains same but including getPaquetesProductos below
-const DEUDORES_URL = 'https://api.bcra.gob.ar/centraldedeudores/v1.0';
+const DEUDORES_URL = 'https://api.bcra.gob.ar/CentralDeDeudores/v1.0';
 const ESTADISTICAS_URL = 'https://api.bcra.gob.ar/estadisticas/v4.0';
 const CAMBIARIAS_URL = 'https://api.bcra.gob.ar/estadisticascambiarias/v1.0';
 
