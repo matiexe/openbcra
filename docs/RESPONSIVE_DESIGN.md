@@ -19,7 +19,7 @@ Este documento detalla los cambios realizados para asegurar que la plataforma se
 ### Branding Oficial
 - **Logo Procesado:** Integración del logo oficial de OPEN BCRA. Se realizó un recorte técnico de los espacios en blanco y optimización de resolución.
 - **Favicon:** Generación de íconos de sistema para navegadores y accesos directos.
-- **Sidebar Footer:** Inclusión de la versión de la aplicación (v0.2.0) vinculada automáticamente al `package.json`.
+- **Sidebar Footer:** Inclusión de la versión de la aplicación (v1.2.0) vinculada automáticamente al `package.json`.
 
 ### Unificación Estética
 - **Consistencia de Tarjetas:** Se unificó el diseño de las tarjetas de **Estadísticas Cambiarias** y **Estadísticas Monetarias**. Ahora comparten:
