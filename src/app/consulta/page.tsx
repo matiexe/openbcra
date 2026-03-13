@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { getDeuda, getChequesRechazados, getDeudaHistorica } from '@/services/bcraApi';
 import { DeudorResponse, DeudaHistoricaResponse } from '@/types/bcra';
+import { getBankLogoByName } from '@/data/logos';
 import { 
   Search, 
   ShieldAlert, 
@@ -26,6 +27,10 @@ export default function ConsultaPage() {
   const [resultHistorico, setResultHistorico] = useState<DeudaHistoricaResponse | null>(null);
   const [error, setError] = useState('');
   const [tab, setTab] = useState<'deuda' | 'cheques' | 'historico'>('deuda');
+  
+  // Estados para filtros de historial
+  const [filterYear, setFilterYear] = useState<string>('all');
+  const [filterMonth, setFilterMonth] = useState<string>('all');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,46 +200,65 @@ export default function ConsultaPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {resultDeuda.periodos[0].entidades.map((d, i) => (
-                          <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
-                            <td className="px-8 py-6">
-                               <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
-                                     <Landmark size={16} />
-                                  </div>
-                                  <span className="font-bold text-slate-900">{d.entidad}</span>
-                               </div>
-                            </td>
-                            <td className="px-8 py-6">
-                               <span className={`px-3 py-1 rounded-full border font-black text-[9px] uppercase tracking-wider ${getSituacionColor(d.situacion)}`}>
-                                 {d.situacion} - {getSituacionLabel(d.situacion)}
-                               </span>
-                            </td>
-                            <td className="px-8 py-6 text-right font-display font-black text-slate-900 text-xl">${d.monto.toLocaleString('es-AR')}</td>
-                          </tr>
-                        ))}
+                        {resultDeuda.periodos[0].entidades.map((d, i) => {
+                          const logo = getBankLogoByName(d.entidad);
+                          return (
+                            <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
+                              <td className="px-8 py-6">
+                                 <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-white border border-slate-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm group-hover:border-blue-100 transition-all">
+                                       {logo ? (
+                                         <img src={logo} alt={d.entidad} className="w-full h-full object-contain" />
+                                       ) : (
+                                         <Landmark size={20} className="text-slate-300" />
+                                       )}
+                                    </div>
+                                    <span className="font-bold text-slate-900">{d.entidad}</span>
+                                 </div>
+                              </td>
+                              <td className="px-8 py-6">
+                                 <span className={`px-3 py-1 rounded-full border font-black text-[9px] uppercase tracking-wider ${getSituacionColor(d.situacion)}`}>
+                                   {d.situacion} - {getSituacionLabel(d.situacion)}
+                                 </span>
+                              </td>
+                              <td className="px-8 py-6 text-right font-display font-black text-slate-900 text-xl">${d.monto.toLocaleString('es-AR')}</td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
 
                     {/* Mobile List */}
                     <div className="md:hidden divide-y divide-slate-100">
-                       {resultDeuda.periodos[0].entidades.map((d, i) => (
-                         <div key={i} className="p-6 space-y-4">
-                            <div className="flex justify-between items-start gap-4">
-                               <div className="flex-1">
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Entidad</p>
-                                  <p className="font-bold text-slate-900 leading-tight">{d.entidad}</p>
-                               </div>
-                               <div className="text-right">
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Monto</p>
-                                  <p className="font-display font-black text-slate-900">${d.monto.toLocaleString('es-AR')}</p>
-                               </div>
-                            </div>
-                            <div className={`p-3 rounded-lg border text-center font-black text-[10px] uppercase tracking-widest ${getSituacionColor(d.situacion)}`}>
-                               Situación {d.situacion}: {getSituacionLabel(d.situacion)}
-                            </div>
-                         </div>
-                       ))}
+                       {resultDeuda.periodos[0].entidades.map((d, i) => {
+                         const logo = getBankLogoByName(d.entidad);
+                         return (
+                           <div key={i} className="p-6 space-y-4">
+                              <div className="flex justify-between items-start gap-4">
+                                 <div className="flex items-center gap-3 flex-1">
+                                    <div className="w-10 h-10 bg-white border border-slate-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm shrink-0">
+                                       {logo ? (
+                                         <img src={logo} alt={d.entidad} className="w-full h-full object-contain" />
+                                       ) : (
+                                         <Landmark size={20} className="text-slate-300" />
+                                       )}
+                                    </div>
+                                    <div className="min-w-0">
+                                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Entidad</p>
+                                       <p className="font-bold text-slate-900 leading-tight truncate">{d.entidad}</p>
+                                    </div>
+                                 </div>
+                                 <div className="text-right shrink-0">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Monto</p>
+                                    <p className="font-display font-black text-slate-900">${d.monto.toLocaleString('es-AR')}</p>
+                                 </div>
+                              </div>
+                              <div className={`p-3 rounded-lg border text-center font-black text-[10px] uppercase tracking-widest ${getSituacionColor(d.situacion)}`}>
+                                 Situación {d.situacion}: {getSituacionLabel(d.situacion)}
+                              </div>
+                           </div>
+                         );
+                       })}
                     </div>
                   </div>
                 ) : (
@@ -255,62 +279,133 @@ export default function ConsultaPage() {
             {tab === 'historico' && (
               <div className="space-y-10">
                 {resultHistorico?.periodos && resultHistorico.periodos.length > 0 ? (
-                  resultHistorico.periodos.map((p, i) => (
-                    <div key={i} className="space-y-4">
-                      <div className="flex items-center gap-3 px-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                           <Calendar size={14} strokeWidth={3} />
-                        </div>
-                        <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">Periodo: {p.periodo}</h3>
+                  <>
+                    {/* Filtros */}
+                    <div className="flex flex-wrap gap-4 p-4 bg-slate-50 rounded-ux border border-slate-200">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Año</label>
+                        <select 
+                          value={filterYear}
+                          onChange={(e) => setFilterYear(e.target.value)}
+                          className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        >
+                          <option value="all">Todos los años</option>
+                          {Array.from(new Set(resultHistorico.periodos.map(p => p.periodo.substring(0, 4)))).map(y => (
+                            <option key={y} value={y}>{y}</option>
+                          ))}
+                        </select>
                       </div>
-                      
-                      <div className="bg-white border border-slate-200 rounded-ux shadow-sm overflow-hidden">
-                        {/* Desktop */}
-                        <table className="w-full text-left hidden md:table">
-                          <thead className="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Entidad</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Situación</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Monto</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100">
-                            {p.entidades.map((ent, j) => (
-                              <tr key={j} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="px-8 py-5">
-                                   <div className="flex items-center gap-3">
-                                      <Landmark size={14} className="text-slate-300 group-hover:text-blue-400 transition-colors" />
-                                      <span className="font-bold text-slate-900 text-sm">{ent.entidad}</span>
-                                   </div>
-                                </td>
-                                <td className="px-8 py-5">
-                                  <span className={`px-2.5 py-1 rounded-full border font-black text-[9px] uppercase tracking-wider ${getSituacionColor(ent.situacion)}`}>
-                                    {ent.situacion} - {getSituacionLabel(ent.situacion)}
-                                  </span>
-                                </td>
-                                <td className="px-8 py-5 text-right font-display font-black text-slate-900">${ent.monto.toLocaleString('es-AR')}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-
-                        {/* Mobile */}
-                        <div className="md:hidden divide-y divide-slate-100">
-                           {p.entidades.map((ent, j) => (
-                             <div key={j} className="p-5 space-y-3">
-                                <div className="flex justify-between items-start">
-                                   <span className="font-bold text-slate-900 text-sm leading-tight pr-4">{ent.entidad}</span>
-                                   <span className="font-display font-black text-slate-900 shrink-0">${ent.monto.toLocaleString('es-AR')}</span>
-                                </div>
-                                <div className={`p-2 rounded-lg border text-center font-black text-[9px] uppercase tracking-widest ${getSituacionColor(ent.situacion)}`}>
-                                   {ent.situacion} - {getSituacionLabel(ent.situacion)}
-                                </div>
-                             </div>
-                           ))}
-                        </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Mes</label>
+                        <select 
+                          value={filterMonth}
+                          onChange={(e) => setFilterMonth(e.target.value)}
+                          className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        >
+                          <option value="all">Todos los meses</option>
+                          {['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'].map(m => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
-                  ))
+
+                    {resultHistorico.periodos
+                      .filter(p => (filterYear === 'all' || p.periodo.startsWith(filterYear)) && (filterMonth === 'all' || p.periodo.endsWith(filterMonth)))
+                      .map((p, i) => {
+                        // Formatear periodo de 202601 a 2026 01
+                        const year = p.periodo.substring(0, 4);
+                        const month = p.periodo.substring(4, 6);
+                        const formattedPeriod = `${year} ${month}`;
+
+                        return (
+                          <div key={i} className="space-y-4">
+                            <div className="flex items-center gap-3 px-2">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm border border-blue-200/50">
+                                 <Calendar size={14} strokeWidth={3} />
+                              </div>
+                              <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">Periodo: {formattedPeriod}</h3>
+                            </div>
+                            
+                            <div className="bg-white border border-slate-200 rounded-ux shadow-sm overflow-hidden">
+                              {/* Desktop */}
+                              <table className="w-full text-left hidden md:table">
+                                <thead className="bg-slate-50 border-b border-slate-200">
+                                  <tr>
+                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Entidad</th>
+                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Situación</th>
+                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Monto</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                  {p.entidades.map((ent, j) => {
+                                    const logo = getBankLogoByName(ent.entidad);
+                                    return (
+                                      <tr key={j} className="hover:bg-slate-50/50 transition-colors group">
+                                        <td className="px-8 py-5">
+                                           <div className="flex items-center gap-3">
+                                              <div className="w-8 h-8 bg-white border border-slate-100 rounded flex items-center justify-center p-1 shadow-sm shrink-0">
+                                                 {logo ? (
+                                                   <img src={logo} alt={ent.entidad} className="w-full h-full object-contain" />
+                                                 ) : (
+                                                   <Landmark size={14} className="text-slate-300" />
+                                                 )}
+                                              </div>
+                                              <span className="font-bold text-slate-900 text-sm">{ent.entidad}</span>
+                                           </div>
+                                        </td>
+                                        <td className="px-8 py-5">
+                                          <span className={`px-2.5 py-1 rounded-full border font-black text-[9px] uppercase tracking-wider ${getSituacionColor(ent.situacion)}`}>
+                                            {ent.situacion} - {getSituacionLabel(ent.situacion)}
+                                          </span>
+                                        </td>
+                                        <td className="px-8 py-5 text-right font-display font-black text-slate-900">${ent.monto.toLocaleString('es-AR')}</td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+
+                              {/* Mobile */}
+                              <div className="md:hidden divide-y divide-slate-100">
+                                 {p.entidades.map((ent, j) => {
+                                   const logo = getBankLogoByName(ent.entidad);
+                                   return (
+                                     <div key={j} className="p-5 space-y-3">
+                                        <div className="flex justify-between items-start">
+                                           <div className="flex items-center gap-3 min-w-0">
+                                              <div className="w-8 h-8 bg-white border border-slate-100 rounded flex items-center justify-center p-1 shadow-sm shrink-0">
+                                                 {logo ? (
+                                                   <img src={logo} alt={ent.entidad} className="w-full h-full object-contain" />
+                                                 ) : (
+                                                   <Landmark size={14} className="text-slate-300" />
+                                                 )}
+                                              </div>
+                                              <span className="font-bold text-slate-900 text-sm leading-tight truncate">{ent.entidad}</span>
+                                           </div>
+                                           <span className="font-display font-black text-slate-900 shrink-0 ml-2">${ent.monto.toLocaleString('es-AR')}</span>
+                                        </div>
+                                        <div className={`p-2 rounded-lg border text-center font-black text-[9px] uppercase tracking-widest ${getSituacionColor(ent.situacion)}`}>
+                                           {ent.situacion} - {getSituacionLabel(ent.situacion)}
+                                        </div>
+                                     </div>
+                                   );
+                                 })}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                    })}
+                    
+                    {resultHistorico.periodos.filter(p => (filterYear === 'all' || p.periodo.startsWith(filterYear)) && (filterMonth === 'all' || p.periodo.endsWith(filterMonth))).length === 0 && (
+                      <div className="p-16 text-center bg-white border-2 border-dashed border-slate-100 rounded-ux space-y-4">
+                         <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+                            <History size={32} />
+                         </div>
+                         <p className="text-slate-400 text-xs font-medium italic">No se encontraron periodos que coincidan con los filtros seleccionados.</p>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="p-16 text-center bg-white border-2 border-dashed border-slate-100 rounded-ux space-y-4">
                      <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto">
