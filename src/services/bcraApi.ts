@@ -1,14 +1,14 @@
 'use server';
 
-import { BCRAApiResponse, PlazoFijo, CajaAhorro, Prestamo, TarjetaCredito, PaqueteProducto, DeudorResponse } from '../types/bcra';
+import { PlazoFijo, CajaAhorro, Prestamo, TarjetaCredito, PaqueteProducto, DeudorResponse, DeudaHistoricaResponse } from '../types/bcra';
 
 const BASE_URL = 'https://api.bcra.gob.ar/transparencia/v1.0';
 // ... rest remains same but including getPaquetesProductos below
-const DEUDORES_URL = 'https://api.bcra.gob.ar/centraldedeudores/v1.0';
+const DEUDORES_URL = 'https://api.bcra.gob.ar/CentralDeDeudores/v1.0';
 const ESTADISTICAS_URL = 'https://api.bcra.gob.ar/estadisticas/v4.0';
 const CAMBIARIAS_URL = 'https://api.bcra.gob.ar/estadisticascambiarias/v1.0';
 
-async function fetchFromBcra<T>(url: string): Promise<any> {
+async function fetchFromBcra(url: string): Promise<any> {
   try {
     const response = await fetch(url, { next: { revalidate: 3600 } });
     if (!response.ok) return null;
@@ -22,37 +22,37 @@ async function fetchFromBcra<T>(url: string): Promise<any> {
 
 export async function getPlazosFijos(codigoEntidad?: number) { 
   const url = codigoEntidad ? `${BASE_URL}/PlazosFijos?codigoEntidad=${codigoEntidad}` : `${BASE_URL}/PlazosFijos`;
-  return (await fetchFromBcra<PlazoFijo>(url)) || []; 
+  return (await fetchFromBcra(url)) || []; 
 }
 
 export async function getCajasAhorros(codigoEntidad?: number) { 
   const url = codigoEntidad ? `${BASE_URL}/CajasAhorros?codigoEntidad=${codigoEntidad}` : `${BASE_URL}/CajasAhorros`;
-  return (await fetchFromBcra<CajaAhorro>(url)) || []; 
+  return (await fetchFromBcra(url)) || []; 
 }
 
 export async function getTarjetasCredito(codigoEntidad?: number) { 
   const url = codigoEntidad ? `${BASE_URL}/TarjetasCredito?codigoEntidad=${codigoEntidad}` : `${BASE_URL}/TarjetasCredito`;
-  return (await fetchFromBcra<TarjetaCredito>(url)) || []; 
+  return (await fetchFromBcra(url)) || []; 
 }
 
 export async function getPaquetesProductos(codigoEntidad?: number) { 
   const url = codigoEntidad ? `${BASE_URL}/PaquetesProductos?codigoEntidad=${codigoEntidad}` : `${BASE_URL}/PaquetesProductos`;
-  return (await fetchFromBcra<PaqueteProducto>(url)) || []; 
+  return (await fetchFromBcra(url)) || []; 
 }
 
 export async function getPrestamosPersonales(codigoEntidad?: number) { 
   const url = codigoEntidad ? `${BASE_URL}/Prestamos/Personales?codigoEntidad=${codigoEntidad}` : `${BASE_URL}/Prestamos/Personales`;
-  return (await fetchFromBcra<Prestamo>(url)) || []; 
+  return (await fetchFromBcra(url)) || []; 
 }
 
 export async function getPrestamosPrendarios(codigoEntidad?: number) { 
   const url = codigoEntidad ? `${BASE_URL}/Prestamos/Prendarios?codigoEntidad=${codigoEntidad}` : `${BASE_URL}/Prestamos/Prendarios`;
-  return (await fetchFromBcra<Prestamo>(url)) || []; 
+  return (await fetchFromBcra(url)) || []; 
 }
 
 export async function getPrestamosHipotecarios(codigoEntidad?: number) { 
   const url = codigoEntidad ? `${BASE_URL}/Prestamos/Hipotecarios?codigoEntidad=${codigoEntidad}` : `${BASE_URL}/Prestamos/Hipotecarios`;
-  return (await fetchFromBcra<Prestamo>(url)) || []; 
+  return (await fetchFromBcra(url)) || []; 
 }
 
 // Obtener todas las entidades reportadas
@@ -103,9 +103,22 @@ export async function getChequesRechazados(identificacion: string) {
 
 // NUEVOS SERVICIOS: ESTADISTICAS
 export async function getPrincipalesVariables() {
-  return await fetchFromBcra<any>(`${ESTADISTICAS_URL}/monetarias`);
+  return await fetchFromBcra(`${ESTADISTICAS_URL}/monetarias`);
 }
 
 export async function getCotizaciones() {
-  return await fetchFromBcra<any>(`${CAMBIARIAS_URL}/Cotizaciones`);
+  return await fetchFromBcra(`${CAMBIARIAS_URL}/Cotizaciones`);
+}
+
+export async function getDeudaHistorica(identificacion: string): Promise<DeudaHistoricaResponse | null> {
+  try {
+    const url = `${DEUDORES_URL}/Deudas/Historicas/${identificacion}`;
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.results || (data.identificacion ? data : null);
+  } catch (error) {
+    console.error('Deuda Historica fetch error:', error);
+    return null;
+  }
 }
