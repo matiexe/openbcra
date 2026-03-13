@@ -1,18 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { getDeuda, getChequesRechazados } from '@/services/bcraApi';
-import { DeudorResponse } from '@/types/bcra';
-import { Search, Wallet, ShieldAlert, AlertCircle, User, Landmark, Calendar, FileText, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { getDeuda, getChequesRechazados, getDeudaHistorica } from '@/services/bcraApi';
+import { DeudorResponse, DeudaHistoricaResponse } from '@/types/bcra';
+import { Search, AlertCircle, User, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ConsultaPage() {
   const [identificacion, setIdentificacion] = useState('');
   const [loading, setLoading] = useState(false);
   const [resultDeuda, setResultDeuda] = useState<DeudorResponse | null>(null);
-  const [resultCheques, setResultCheques] = useState<any>(null);
+  const [resultCheques, setResultCheques] = useState<any[] | null>(null);
+  const [resultHistorico, setResultHistorico] = useState<DeudaHistoricaResponse | null>(null);
   const [error, setError] = useState('');
-  const [tab, setTab] = useState<'deuda' | 'cheques'>('deuda');
+  const [tab, setTab] = useState<'deuda' | 'cheques' | 'historico'>('deuda');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,18 +23,21 @@ export default function ConsultaPage() {
     setError('');
     setResultDeuda(null);
     setResultCheques(null);
+    setResultHistorico(null);
     
     try {
       // Intentar traer ambos en paralelo
-      const [deuda, cheques] = await Promise.all([
+      const [deuda, cheques, historico] = await Promise.all([
         getDeuda(identificacion),
-        getChequesRechazados(identificacion)
+        getChequesRechazados(identificacion),
+        getDeudaHistorica(identificacion)
       ]);
 
       if (deuda) setResultDeuda(deuda);
       if (cheques) setResultCheques(cheques);
+      if (historico) setResultHistorico(historico);
 
-      if (!deuda && !cheques) {
+      if (!deuda && !cheques && !historico) {
         setError('No se encontraron registros para la identificación ingresada.');
       }
     } catch (err) {
@@ -112,6 +116,7 @@ export default function ConsultaPage() {
 
             <div className="flex gap-4 border-b border-slate-200">
                <button onClick={() => setTab('deuda')} className={`px-6 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-2 ${tab === 'deuda' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400'}`}>Situación de Deuda</button>
+               <button onClick={() => setTab('historico')} className={`px-6 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-2 ${tab === 'historico' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400'}`}>Historial de Deuda</button>
                <button onClick={() => setTab('cheques')} className={`px-6 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-2 ${tab === 'cheques' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400'}`}>Cheques Rechazados</button>
             </div>
 
@@ -143,6 +148,45 @@ export default function ConsultaPage() {
                     </table>
                   </div>
                 ) : <div className="p-12 text-center text-slate-400 font-medium italic border-2 border-dashed border-slate-100 rounded-ux">No se registran deudas informadas en el periodo.</div>}
+              </div>
+            )}
+
+            {tab === 'historico' && (
+              <div className="space-y-8">
+                {resultHistorico?.periodos && resultHistorico.periodos.length > 0 ? (
+                  resultHistorico.periodos.map((p, i) => (
+                    <div key={i} className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Calendar size={16} className="text-blue-600" />
+                        <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">Periodo: {p.periodo}</h3>
+                      </div>
+                      <div className="bg-white border border-slate-200 rounded-ux shadow-sm overflow-hidden">
+                        <table className="w-full text-left">
+                          <thead className="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Entidad</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Situación</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Monto ($)</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {p.entidades.map((ent, j) => (
+                              <tr key={j} className="hover:bg-slate-50/50">
+                                <td className="px-8 py-4 font-bold text-slate-900 text-sm">{ent.entidad}</td>
+                                <td className="px-8 py-4">
+                                  <span className={`px-2 py-1 rounded-md border font-black text-[10px] ${ent.situacion === 1 ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
+                                    {ent.situacion} - {getSituacionLabel(ent.situacion)}
+                                  </span>
+                                </td>
+                                <td className="px-8 py-4 text-right font-display font-black text-slate-900">${ent.monto.toLocaleString('es-AR')}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))
+                ) : <div className="p-12 text-center text-slate-400 font-medium italic border-2 border-dashed border-slate-100 rounded-ux">No se registra historial de deudas para esta identificación.</div>}
               </div>
             )}
 

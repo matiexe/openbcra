@@ -97,3 +97,28 @@ export interface DeudorResponse {
   periodo: string;
   deudas: DeudaItem[];
 }
+
+export interface DeudaHistoricaItem {
+  entidad: string;
+  situacion: number;
+  fechaSit1?: string;
+  monto: number;
+  diasAtrasoPago?: number;
+  refinanciaciones?: boolean;
+  recategorizacionOblig?: boolean;
+  situacionJuridica?: boolean;
+  irrecDisposicionTecnica?: boolean;
+  enRevision?: boolean;
+  procesoJud?: boolean;
+}
+
+export interface DeudaHistoricaPeriodo {
+  periodo: string;
+  entidades: DeudaHistoricaItem[];
+}
+
+export interface DeudaHistoricaResponse {
+  identificacion: string | number;
+  denominacion: string;
+  periodos: DeudaHistoricaPeriodo[];
+}
