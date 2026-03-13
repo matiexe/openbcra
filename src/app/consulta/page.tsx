@@ -329,31 +329,32 @@ export default function ConsultaPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          {resultCheques.map((ch: any, i: number) => (
-                            <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                              <td className="px-8 py-6 font-black text-slate-900">{ch.numeroCheque}</td>
-                              <td className="px-8 py-6">
-                                 <div className="flex items-center gap-2 text-slate-500 text-sm">
-                                    <Clock size={14} />
-                                    {ch.fechaRechazo}
-                                 </div>
-                              </td>
-                              <td className="px-8 py-6">
-                                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 border border-red-100 rounded-md text-[10px] font-black uppercase tracking-wider">
-                                    <ShieldAlert size={12} />
-                                    {ch.causal}
-                                 </div>
-                              </td>
-                              <td className="px-8 py-6 text-right font-display font-black text-slate-900 text-xl">${ch.monto.toLocaleString('es-AR')}</td>
-                            </tr>
-                          ))}
+                        {resultCheques.map((ch: { numeroCheque: string; fechaRechazo: string; causal: string; monto: number }, i: number) => (
+                          <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="px-8 py-6 font-black text-slate-900">{ch.numeroCheque}</td>
+                            <td className="px-8 py-6">
+                               <div className="flex items-center gap-2 text-slate-500 text-sm">
+                                  <Clock size={14} />
+                                  {ch.fechaRechazo}
+                               </div>
+                            </td>
+                            <td className="px-8 py-6">
+                               <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 border border-red-100 rounded-md text-[10px] font-black uppercase tracking-wider">
+                                  <ShieldAlert size={12} />
+                                  {ch.causal}
+                               </div>
+                            </td>
+                            <td className="px-8 py-6 text-right font-display font-black text-slate-900 text-xl">${ch.monto.toLocaleString('es-AR')}</td>
+                          </tr>
+                        ))}
                         </tbody>
-                      </table>
+                        </table>
 
-                      {/* Mobile Cheques List */}
-                      <div className="md:hidden divide-y divide-slate-100">
-                         {resultCheques.map((ch: any, i: number) => (
-                           <div key={i} className="p-6 space-y-4">
+                        {/* Mobile Cheques List */}
+                        <div className="md:hidden divide-y divide-slate-100">
+                        {resultCheques.map((ch: { numeroCheque: string; fechaRechazo: string; causal: string; monto: number }, i: number) => (
+                         <div key={i} className="p-6 space-y-4">
+
                               <div className="flex justify-between items-start">
                                  <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nro Cheque</p>
