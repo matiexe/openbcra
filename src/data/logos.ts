@@ -45,6 +45,52 @@ export const LOGO_MAP: Record<number, string> = {
   340: 'yoy.svg',
 };
 
+// Mapeo por nombre (normalizado) para Central de Deudores
+export const LOGO_NAME_MAP: Record<string, string> = {
+  'galicia': 'galicia.svg',
+  'nacion': 'banco-nacion.svg',
+  'provincia de buenos aires': 'banco-provincia.svg',
+  'provincia': 'banco-provincia.svg',
+  'icbc': 'icbc.svg',
+  'bbva': 'bbva.svg',
+  'frances': 'bbva.svg',
+  'bancor': 'bancor.svg',
+  'cordoba': 'bancor.svg',
+  'supervielle': 'banco-supervielle.svg',
+  'ciudad': 'banco-ciudad.svg',
+  'patagonia': 'banco-patagonia.svg',
+  'hipotecario': 'banco-hipotecario.svg',
+  'san juan': 'banco-san-juan.svg',
+  'municipal': 'banco-municipal.svg',
+  'santander': 'banco-santander.svg',
+  'santa cruz': 'banco-santa-cruz.svg',
+  'corrientes': 'banco-corrientes.svg',
+  'brubank': 'brubank.svg',
+  'credicoop': 'banco-credicoop.svg',
+  'macro': 'banco-macro.svg',
+  'comafi': 'banco-comafi.svg',
+  'piano': 'banco-piano.svg',
+  'del sol': 'banco-del-sol.svg',
+  'santa fe': 'banco-santa-fe.svg',
+  'uala': 'ual.svg',
+  'alau': 'ual.svg',
+  'entre rios': 'banco-entre-rios.svg',
+  'columbia': 'banco-columbia.svg',
+  'bica': 'banco-bica.svg',
+  'coinag': 'banco-coinag.svg',
+  'mercadopago': 'mercadopago.svg',
+  'mercadolibre': 'mercadopago.svg',
+  'naranja': 'naranja-x.svg',
+  'openbank': 'openbank.svg',
+  'personal pay': 'personal-pay.svg',
+  'lemon': 'lemon.svg',
+  'belo': 'belo.svg',
+  'prex': 'prex.svg',
+  'yoy': 'yoy.svg',
+  'hsbc': 'hsbc.svg',
+  'ita': 'ita.svg',
+};
+
 // Mapeos secundarios o redundantes
 const ALIAS_MAP: Record<number, number> = {
   322: 15,  // Variante ICBC
@@ -59,4 +105,18 @@ export function getBankLogo(codigo: number): string | null {
   const filename = LOGO_MAP[actualCodigo];
   if (!filename) return null;
   return `/logos/${filename}`;
+}
+
+export function getBankLogoByName(name: string): string | null {
+  if (!name) return null;
+  const normalized = name.toLowerCase();
+  
+  // Buscar coincidencia parcial en el mapa de nombres
+  for (const [key, filename] of Object.entries(LOGO_NAME_MAP)) {
+    if (normalized.includes(key)) {
+      return `/logos/${filename}`;
+    }
+  }
+  
+  return null;
 }

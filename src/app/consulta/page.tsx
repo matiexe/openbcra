@@ -58,8 +58,7 @@ export default function ConsultaPage() {
           setResultDeuda({
             identificacion: identificacion,
             denominacion: historico.denominacion,
-            periodo: '',
-            deudas: []
+            periodos: []
           });
         }
       }
@@ -153,10 +152,10 @@ export default function ConsultaPage() {
                        <FileText size={16} />
                        <span className="font-bold text-sm">CUIT: {identificacion}</span>
                     </div>
-                    {resultDeuda?.periodo && (
+                    {resultDeuda?.periodos && resultDeuda.periodos.length > 0 && (
                       <div className="flex items-center gap-2 text-slate-400">
                          <Calendar size={16} />
-                         <span className="font-bold text-sm uppercase">Periodo: {resultDeuda.periodo}</span>
+                         <span className="font-bold text-sm uppercase">Periodo: {resultDeuda.periodos[0].periodo}</span>
                       </div>
                     )}
                   </div>
