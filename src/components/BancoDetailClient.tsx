@@ -45,10 +45,10 @@ export default function BancoDetailClient({ data }: BancoDetailClientProps) {
   const CategoryContainer = ({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) => (
     <section className="bg-white rounded-ux border border-slate-200 p-8 shadow-sm group animate-fadeIn mb-12">
       <div className="flex items-center gap-4 mb-8 border-b border-slate-50 pb-6">
-        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 border border-blue-100 shadow-sm">
+        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 border border-blue-100 shadow-sm shrink-0">
           <Icon size={20} strokeWidth={3} />
         </div>
-        <h2 className="text-xl font-display font-bold text-slate-900">{title}</h2>
+        <h2 className="text-lg md:text-xl font-display font-bold text-slate-900 leading-tight">{title}</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {children}

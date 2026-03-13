@@ -3,7 +3,19 @@
 import { useState } from 'react';
 import { getDeuda, getChequesRechazados, getDeudaHistorica } from '@/services/bcraApi';
 import { DeudorResponse, DeudaHistoricaResponse } from '@/types/bcra';
-import { Search, AlertCircle, User, Calendar } from 'lucide-react';
+import { 
+  Search, 
+  ShieldAlert, 
+  AlertCircle, 
+  User, 
+  Landmark, 
+  Calendar, 
+  FileText, 
+  CheckCircle2, 
+  Info, 
+  Clock, 
+  History 
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ConsultaPage() {
@@ -26,7 +38,6 @@ export default function ConsultaPage() {
     setResultHistorico(null);
     
     try {
-      // Intentar traer ambos en paralelo
       const [deuda, cheques, historico] = await Promise.all([
         getDeuda(identificacion),
         getChequesRechazados(identificacion),
@@ -54,147 +65,261 @@ export default function ConsultaPage() {
     return labels[s] || 'Desconocido';
   };
 
+  const getSituacionColor = (s: number) => {
+    if (s === 1) return 'bg-green-50 text-green-600 border-green-100';
+    if (s === 2) return 'bg-amber-50 text-amber-600 border-amber-100';
+    return 'bg-red-50 text-red-600 border-red-100';
+  };
+
   return (
-    <div className="space-y-12 animate-fadeIn max-w-5xl">
-      <header className="space-y-6">
+    <div className="space-y-10 animate-fadeIn max-w-6xl mx-auto pb-20">
+      <header className="space-y-4 px-4 md:px-0">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-widest">
-          Servicios OPEN BCRA
+          Transparencia Central
         </div>
-        <h1 className="text-5xl md:text-6xl font-display font-black tracking-tight text-slate-900 leading-tight">
-          Consulta Crediticia.
+        <h1 className="text-4xl md:text-5xl font-display font-black tracking-tight text-slate-900 leading-tight">
+          Central de Deudores.
         </h1>
-        <p className="text-xl text-slate-500 font-medium max-w-2xl leading-relaxed">
-          Consulte situación de deudores y cheques rechazados en tiempo real.
+        <p className="text-lg text-slate-500 font-medium max-w-2xl">
+          Consulte la situación crediticia y cheques rechazados informados por las entidades del sistema financiero.
         </p>
       </header>
 
-      <section className="bg-white p-8 rounded-ux border border-slate-200 shadow-xl shadow-slate-200/50">
-        <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400">
-              <User size={20} />
+      <section className="px-4 md:px-0">
+        <div className="bg-white p-6 md:p-8 rounded-ux border border-slate-200 shadow-xl shadow-slate-200/40">
+          <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative group">
+              <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                <User size={20} />
+              </div>
+              <input 
+                type="text" 
+                placeholder="CUIT / CUIL (11 dígitos)"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 py-4 pl-14 pr-6 rounded-ux focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-500 transition-all font-bold text-lg"
+                value={identificacion}
+                onChange={(e) => setIdentificacion(e.target.value.replace(/[^0-9]/g, ''))}
+                maxLength={11}
+              />
             </div>
-            <input 
-              type="text" 
-              placeholder="Ingrese CUIT / CUIL (11 dígitos)"
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 py-4 pl-14 pr-6 rounded-ux focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-500 transition-all font-bold text-lg"
-              value={identificacion}
-              onChange={(e) => setIdentificacion(e.target.value.replace(/[^0-9]/g, ''))}
-              maxLength={11}
-            />
-          </div>
-          <button 
-            type="submit"
-            disabled={loading || identificacion.length < 11}
-            className="bg-blue-600 text-white px-10 py-4 rounded-ux font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg shadow-blue-600/20"
-          >
-            {loading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Search size={18} strokeWidth={3} />}
-            Consultar
-          </button>
-        </form>
+            <button 
+              type="submit"
+              disabled={loading || identificacion.length < 11}
+              className="bg-blue-600 text-white px-10 py-4 rounded-ux font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg shadow-blue-600/20"
+            >
+              {loading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Search size={18} strokeWidth={3} />}
+              Consultar
+            </button>
+          </form>
+        </div>
       </section>
 
       <AnimatePresence mode="wait">
         {error && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-50 border border-red-100 p-6 rounded-ux text-red-700 font-bold flex items-center gap-3">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-4 md:mx-0 bg-red-50 border border-red-100 p-6 rounded-ux text-red-700 font-bold flex items-center gap-3">
             <AlertCircle size={20} /> {error}
           </motion.div>
         )}
 
-        {(resultDeuda || resultCheques) && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-            <div className="bg-slate-900 text-white p-10 rounded-ux shadow-2xl relative overflow-hidden">
-               <div className="relative z-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400 mb-2">Informe Consolidado</p>
-                  <h2 className="text-4xl font-display font-black tracking-tight">{resultDeuda?.denominacion || 'Denominación no disponible'}</h2>
-                  <div className="flex items-center gap-6 mt-4">
-                    <p className="text-slate-400 font-bold">CUIT: {identificacion}</p>
-                    {resultDeuda?.periodo && <div className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border border-blue-500/30">Periodo: {resultDeuda.periodo}</div>}
+        {(resultDeuda || resultCheques || resultHistorico) && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 px-4 md:px-0">
+            {/* Header del Informe */}
+            <div className="bg-slate-900 text-white p-8 md:p-10 rounded-ux shadow-2xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
+                  <Landmark size={240} />
+               </div>
+               <div className="relative z-10 space-y-6">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400 mb-2">Informe Consolidado BCRA</p>
+                    <h2 className="text-3xl md:text-4xl font-display font-black tracking-tight leading-tight">{resultDeuda?.denominacion || 'Denominación no disponible'}</h2>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4 md:gap-8">
+                    <div className="flex items-center gap-2 text-slate-400">
+                       <FileText size={16} />
+                       <span className="font-bold text-sm">CUIT: {identificacion}</span>
+                    </div>
+                    {resultDeuda?.periodo && (
+                      <div className="flex items-center gap-2 text-slate-400">
+                         <Calendar size={16} />
+                         <span className="font-bold text-sm uppercase">Periodo: {resultDeuda.periodo}</span>
+                      </div>
+                    )}
                   </div>
                </div>
             </div>
 
-            <div className="flex gap-4 border-b border-slate-200">
-               <button onClick={() => setTab('deuda')} className={`px-6 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-2 ${tab === 'deuda' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400'}`}>Situación de Deuda</button>
-               <button onClick={() => setTab('historico')} className={`px-6 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-2 ${tab === 'historico' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400'}`}>Historial de Deuda</button>
-               <button onClick={() => setTab('cheques')} className={`px-6 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-2 ${tab === 'cheques' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400'}`}>Cheques Rechazados</button>
+            {/* Tabs Responsivos */}
+            <div className="flex gap-2 border-b border-slate-200 overflow-x-auto no-scrollbar scroll-smooth">
+               <button 
+                 onClick={() => setTab('deuda')} 
+                 className={`px-6 py-4 font-black text-[10px] md:text-xs uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${tab === 'deuda' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+               >
+                 Situación de Deuda
+               </button>
+               <button 
+                 onClick={() => setTab('historico')} 
+                 className={`px-6 py-4 font-black text-[10px] md:text-xs uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${tab === 'historico' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+               >
+                 Historial de Deuda
+               </button>
+               <button 
+                 onClick={() => setTab('cheques')} 
+                 className={`px-6 py-4 font-black text-[10px] md:text-xs uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${tab === 'cheques' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+               >
+                 Cheques Rechazados
+               </button>
             </div>
 
+            {/* Contenido de Deuda */}
             {tab === 'deuda' && (
               <div className="space-y-6">
                 {resultDeuda?.deudas && resultDeuda.deudas.length > 0 ? (
                   <div className="bg-white border border-slate-200 rounded-ux shadow-sm overflow-hidden">
-                    <table className="w-full text-left">
+                    {/* Desktop Table */}
+                    <table className="w-full text-left hidden md:table">
                       <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Entidad</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Situación</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Monto ($)</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Monto</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         {resultDeuda.deudas.map((d, i) => (
-                          <tr key={i} className="hover:bg-slate-50/50">
-                            <td className="px-8 py-6 font-bold text-slate-900">{d.entidad}</td>
+                          <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
                             <td className="px-8 py-6">
-                               <span className={`px-3 py-1 rounded-lg border font-black text-[10px] ${d.situacion === 1 ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
+                               <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
+                                     <Landmark size={16} />
+                                  </div>
+                                  <span className="font-bold text-slate-900">{d.entidad}</span>
+                               </div>
+                            </td>
+                            <td className="px-8 py-6">
+                               <span className={`px-3 py-1 rounded-full border font-black text-[9px] uppercase tracking-wider ${getSituacionColor(d.situacion)}`}>
                                  {d.situacion} - {getSituacionLabel(d.situacion)}
                                </span>
                             </td>
-                            <td className="px-8 py-6 text-right font-display font-black text-slate-900 text-lg">${d.monto.toLocaleString('es-AR')}</td>
+                            <td className="px-8 py-6 text-right font-display font-black text-slate-900 text-xl">${d.monto.toLocaleString('es-AR')}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
+
+                    {/* Mobile List */}
+                    <div className="md:hidden divide-y divide-slate-100">
+                       {resultDeuda.deudas.map((d, i) => (
+                         <div key={i} className="p-6 space-y-4">
+                            <div className="flex justify-between items-start gap-4">
+                               <div className="flex-1">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Entidad</p>
+                                  <p className="font-bold text-slate-900 leading-tight">{d.entidad}</p>
+                               </div>
+                               <div className="text-right">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Monto</p>
+                                  <p className="font-display font-black text-slate-900">${d.monto.toLocaleString('es-AR')}</p>
+                               </div>
+                            </div>
+                            <div className={`p-3 rounded-lg border text-center font-black text-[10px] uppercase tracking-widest ${getSituacionColor(d.situacion)}`}>
+                               Situación {d.situacion}: {getSituacionLabel(d.situacion)}
+                            </div>
+                         </div>
+                       ))}
+                    </div>
                   </div>
-                ) : <div className="p-12 text-center text-slate-400 font-medium italic border-2 border-dashed border-slate-100 rounded-ux">No se registran deudas informadas en el periodo.</div>}
+                ) : (
+                  <div className="p-16 text-center bg-white border-2 border-dashed border-slate-100 rounded-ux space-y-4">
+                     <div className="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                        <CheckCircle2 size={32} />
+                     </div>
+                     <div>
+                        <p className="text-slate-900 font-black uppercase tracking-widest text-sm">Sin Deudas Informadas</p>
+                        <p className="text-slate-400 text-xs font-medium">No se registran saldos deudores asociados para el periodo consultado.</p>
+                     </div>
+                  </div>
+                )}
               </div>
             )}
 
+            {/* Contenido de Histórico */}
             {tab === 'historico' && (
-              <div className="space-y-8">
+              <div className="space-y-10">
                 {resultHistorico?.periodos && resultHistorico.periodos.length > 0 ? (
                   resultHistorico.periodos.map((p, i) => (
                     <div key={i} className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <Calendar size={16} className="text-blue-600" />
+                      <div className="flex items-center gap-3 px-2">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                           <Calendar size={14} strokeWidth={3} />
+                        </div>
                         <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">Periodo: {p.periodo}</h3>
                       </div>
+                      
                       <div className="bg-white border border-slate-200 rounded-ux shadow-sm overflow-hidden">
-                        <table className="w-full text-left">
+                        {/* Desktop */}
+                        <table className="w-full text-left hidden md:table">
                           <thead className="bg-slate-50 border-b border-slate-200">
                             <tr>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Entidad</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Situación</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Monto ($)</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Monto</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-100">
                             {p.entidades.map((ent, j) => (
-                              <tr key={j} className="hover:bg-slate-50/50">
-                                <td className="px-8 py-4 font-bold text-slate-900 text-sm">{ent.entidad}</td>
-                                <td className="px-8 py-4">
-                                  <span className={`px-2 py-1 rounded-md border font-black text-[10px] ${ent.situacion === 1 ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
+                              <tr key={j} className="hover:bg-slate-50/50 transition-colors group">
+                                <td className="px-8 py-5">
+                                   <div className="flex items-center gap-3">
+                                      <Landmark size={14} className="text-slate-300 group-hover:text-blue-400 transition-colors" />
+                                      <span className="font-bold text-slate-900 text-sm">{ent.entidad}</span>
+                                   </div>
+                                </td>
+                                <td className="px-8 py-5">
+                                  <span className={`px-2.5 py-1 rounded-full border font-black text-[9px] uppercase tracking-wider ${getSituacionColor(ent.situacion)}`}>
                                     {ent.situacion} - {getSituacionLabel(ent.situacion)}
                                   </span>
                                 </td>
-                                <td className="px-8 py-4 text-right font-display font-black text-slate-900">${ent.monto.toLocaleString('es-AR')}</td>
+                                <td className="px-8 py-5 text-right font-display font-black text-slate-900">${ent.monto.toLocaleString('es-AR')}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
+
+                        {/* Mobile */}
+                        <div className="md:hidden divide-y divide-slate-100">
+                           {p.entidades.map((ent, j) => (
+                             <div key={j} className="p-5 space-y-3">
+                                <div className="flex justify-between items-start">
+                                   <span className="font-bold text-slate-900 text-sm leading-tight pr-4">{ent.entidad}</span>
+                                   <span className="font-display font-black text-slate-900 shrink-0">${ent.monto.toLocaleString('es-AR')}</span>
+                                </div>
+                                <div className={`p-2 rounded-lg border text-center font-black text-[9px] uppercase tracking-widest ${getSituacionColor(ent.situacion)}`}>
+                                   {ent.situacion} - {getSituacionLabel(ent.situacion)}
+                                </div>
+                             </div>
+                           ))}
+                        </div>
                       </div>
                     </div>
                   ))
-                ) : <div className="p-12 text-center text-slate-400 font-medium italic border-2 border-dashed border-slate-100 rounded-ux">No se registra historial de deudas para esta identificación.</div>}
+                ) : (
+                  <div className="p-16 text-center bg-white border-2 border-dashed border-slate-100 rounded-ux space-y-4">
+                     <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+                        <History size={32} />
+                     </div>
+                     <div>
+                        <p className="text-slate-900 font-black uppercase tracking-widest text-sm">Sin Historial Disponible</p>
+                        <p className="text-slate-400 text-xs font-medium">No se registran datos históricos asociados para esta identificación.</p>
+                     </div>
+                  </div>
+                )}
               </div>
             )}
 
+            {/* Contenido de Cheques */}
             {tab === 'cheques' && (
               <div className="space-y-6">
                 {resultCheques && resultCheques.length > 0 ? (
                    <div className="bg-white border border-slate-200 rounded-ux shadow-sm overflow-hidden">
-                      <table className="w-full text-left">
+                      <table className="w-full text-left hidden md:table">
                         <thead className="bg-slate-50 border-b border-slate-200">
                           <tr>
                             <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Nro Cheque</th>
@@ -205,19 +330,80 @@ export default function ConsultaPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                           {resultCheques.map((ch: any, i: number) => (
-                            <tr key={i}>
-                              <td className="px-8 py-6 font-bold">{ch.numeroCheque}</td>
-                              <td className="px-8 py-6 text-slate-500">{ch.fechaRechazo}</td>
-                              <td className="px-8 py-6"><span className="text-red-600 font-bold">{ch.causal}</span></td>
-                              <td className="px-8 py-6 text-right font-black">${ch.monto.toLocaleString('es-AR')}</td>
+                            <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                              <td className="px-8 py-6 font-black text-slate-900">{ch.numeroCheque}</td>
+                              <td className="px-8 py-6">
+                                 <div className="flex items-center gap-2 text-slate-500 text-sm">
+                                    <Clock size={14} />
+                                    {ch.fechaRechazo}
+                                 </div>
+                              </td>
+                              <td className="px-8 py-6">
+                                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 border border-red-100 rounded-md text-[10px] font-black uppercase tracking-wider">
+                                    <ShieldAlert size={12} />
+                                    {ch.causal}
+                                 </div>
+                              </td>
+                              <td className="px-8 py-6 text-right font-display font-black text-slate-900 text-xl">${ch.monto.toLocaleString('es-AR')}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
+
+                      {/* Mobile Cheques List */}
+                      <div className="md:hidden divide-y divide-slate-100">
+                         {resultCheques.map((ch: any, i: number) => (
+                           <div key={i} className="p-6 space-y-4">
+                              <div className="flex justify-between items-start">
+                                 <div>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nro Cheque</p>
+                                    <p className="font-black text-slate-900">{ch.numeroCheque}</p>
+                                 </div>
+                                 <div className="text-right">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Monto</p>
+                                    <p className="font-display font-black text-slate-900">${ch.monto.toLocaleString('es-AR')}</p>
+                                 </div>
+                              </div>
+                              <div className="flex items-center justify-between gap-4">
+                                 <div className="flex items-center gap-1.5 text-slate-500">
+                                    <Clock size={14} />
+                                    <span className="text-[10px] font-bold">{ch.fechaRechazo}</span>
+                                 </div>
+                                 <div className="px-2 py-1 bg-red-50 text-red-600 border border-red-100 rounded text-[9px] font-black uppercase tracking-tighter">
+                                    {ch.causal}
+                                 </div>
+                              </div>
+                           </div>
+                         ))}
+                      </div>
                    </div>
-                ) : <div className="p-12 text-center text-slate-400 font-medium italic border-2 border-dashed border-slate-100 rounded-ux">No se registran cheques rechazados asociados a este CUIT.</div>}
+                ) : (
+                  <div className="p-16 text-center bg-white border-2 border-dashed border-slate-100 rounded-ux space-y-4">
+                     <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                        <CheckCircle2 size={32} />
+                     </div>
+                     <div>
+                        <p className="text-slate-900 font-black uppercase tracking-widest text-sm">Sin Cheques Rechazados</p>
+                        <p className="text-slate-400 text-xs font-medium">No se registran incidentes de cheques rechazados para este CUIT.</p>
+                     </div>
+                  </div>
+                )}
               </div>
             )}
+
+            {/* Disclaimer Footer */}
+            <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 flex items-start gap-4">
+               <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 shrink-0 border border-slate-100 shadow-sm">
+                  <Info size={20} />
+               </div>
+               <div className="space-y-1">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">Nota Legal</p>
+                  <p className="text-[10px] text-slate-500 leading-relaxed font-medium italic">
+                    La información visualizada es provista directamente por el Banco Central de la República Argentina. 
+                    Este portal actúa únicamente como visualizador de datos abiertos y no almacena información crediticia privada.
+                  </p>
+               </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
