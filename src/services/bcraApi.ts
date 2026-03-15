@@ -8,14 +8,33 @@ const DEUDORES_URL = 'https://api.bcra.gob.ar/CentralDeDeudores/v1.0';
 const ESTADISTICAS_URL = 'https://api.bcra.gob.ar/estadisticas/v4.0';
 const CAMBIARIAS_URL = 'https://api.bcra.gob.ar/estadisticascambiarias/v1.0';
 
+const COMMON_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Accept': 'application/json, text/plain, */*',
+  'Accept-Language': 'es-AR,es;q=0.9,en-US;q=0.8,en;q=0.7',
+};
+
 async function fetchFromBcra(url: string): Promise<any> {
   try {
-    const response = await fetch(url, { next: { revalidate: 3600 } });
-    if (!response.ok) return null;
+    const response = await fetch(url, { 
+      next: { revalidate: 3600 },
+      headers: COMMON_HEADERS,
+      signal: AbortSignal.timeout(15000) // 15s para ser tolerantes con la latencia del BCRA
+    });
+
+    if (!response.ok) {
+      console.warn(`BCRA API Warning: ${response.status} for ${url}`);
+      return null;
+    }
+
     const data = await response.json();
     return data.results || (Array.isArray(data) ? data : data);
-  } catch (error) {
-    console.error('Fetch error:', error);
+  } catch (error: any) {
+    if (error.name === 'TimeoutError') {
+      console.error(`BCRA API Timeout: ${url}`);
+    } else {
+      console.error(`BCRA API Fetch error for ${url}:`, error.message);
+    }
     return null;
   }
 }

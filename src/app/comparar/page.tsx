@@ -14,6 +14,7 @@ import {
   getEntidades 
 } from '@/services/bcraApi';
 import { getBankLogo } from '@/data/logos';
+import ApiStatusAlert from '@/components/ApiStatusAlert';
 
 type CategoryType = 'plazos' | 'tarjetas' | 'prestamos' | 'paquetes' | 'cuentas';
 
@@ -158,6 +159,10 @@ export default function ComparadorPage() {
           <div className="h-12 flex items-center justify-center text-slate-300 font-black text-xl italic">VS</div>
           <Selector label="Entidad a Comparar" val={bank2} setVal={setBank2} search={search2} setSearch={setSearch2} open={open2} setOpen={setOpen2} filtered={filtered2} />
         </div>
+      </div>
+
+      <div className="px-4 md:px-0">
+        <ApiStatusAlert serviceName="Plazos Fijos" />
       </div>
 
       <div className="sticky top-0 lg:top-0 bg-slate-50/80 backdrop-blur-md z-40 border-b border-slate-100 px-4 md:px-0">
