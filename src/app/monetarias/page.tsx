@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { getPrincipalesVariables } from '@/services/bcraApi';
 import { BarChart3, Calendar, Info, Search, ChevronDown, Landmark, TrendingUp, X, Activity, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ApiStatusAlert from '@/components/ApiStatusAlert';
 
 export default function MonetariasPage() {
   const [variables, setVariables] = useState<any[]>([]);
@@ -120,6 +121,8 @@ export default function MonetariasPage() {
           Evolución de los principales indicadores monetarios y financieros reportados por la Gerencia de Estadísticas.
         </p>
       </header>
+
+      <ApiStatusAlert serviceName="Estadísticas Monetarias" />
 
       {/* Indicadores Clave */}
       <section className="space-y-6 px-4 md:px-0">

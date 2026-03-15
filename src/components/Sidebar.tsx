@@ -12,7 +12,8 @@ import {
   SearchCheck,
   Zap,
   Menu,
-  X
+  X,
+  Activity
 } from 'lucide-react';
 
 const menuItems = [
@@ -21,6 +22,7 @@ const menuItems = [
   { name: 'Consulta Crediticia', icon: SearchCheck, path: '/consulta' },
   { name: 'Estadísticas Cambiarias', icon: ArrowRightLeft, path: '/cambiarias' },
   { name: 'Estadísticas Monetarias', icon: BarChart3, path: '/monetarias' },
+  { name: 'Monitor de API', icon: Activity, path: '/monitorizacion' },
 ];
 
 export default function Sidebar() {

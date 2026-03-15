@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowUpRight, Landmark, DollarSign, Zap } from 'lucide-react';
 import { getBankLogo } from '@/data/logos';
 import { PlazoFijo } from '@/types/bcra';
+import ApiStatusAlert from './ApiStatusAlert';
 
 interface PlazosFijosClientProps {
   initialData: PlazoFijo[];
@@ -65,6 +66,7 @@ export default function PlazosFijosClient({ initialData }: PlazosFijosClientProp
 
   return (
     <div className="space-y-8">
+      <ApiStatusAlert serviceName="Plazos Fijos" />
       <div className="flex flex-wrap gap-3">
         <FilterBtn tipo="PESOS" label="En Pesos" icon={DollarSign} />
         <FilterBtn tipo="UVA" label="Ajustables UVA" icon={Zap} />

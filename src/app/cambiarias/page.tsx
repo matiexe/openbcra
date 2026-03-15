@@ -1,6 +1,7 @@
 import { getCotizaciones } from '@/services/bcraApi';
 import { ArrowRightLeft, Info } from 'lucide-react';
 import CambiariasClient from '@/components/CambiariasClient';
+import ApiStatusAlert from '@/components/ApiStatusAlert';
 
 export default async function CambiariasPage() {
   const res = await getCotizaciones();
@@ -22,6 +23,7 @@ export default async function CambiariasPage() {
       </header>
 
       <div className="px-4 md:px-0">
+        <ApiStatusAlert serviceName="Cotizaciones Cambiarias" />
         <CambiariasClient initialData={cotizaciones} fecha={fechaActualizacion} />
       </div>
 

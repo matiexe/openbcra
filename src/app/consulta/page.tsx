@@ -18,6 +18,7 @@ import {
   History 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ApiStatusAlert from '@/components/ApiStatusAlert';
 
 export default function ConsultaPage() {
   const [identificacion, setIdentificacion] = useState('');
@@ -99,6 +100,10 @@ export default function ConsultaPage() {
           Consulte la situación crediticia y cheques rechazados informados por las entidades del sistema financiero.
         </p>
       </header>
+
+      <div className="px-4 md:px-0">
+        <ApiStatusAlert serviceName="Central de Deudores" />
+      </div>
 
       <section className="px-4 md:px-0">
         <div className="bg-white p-6 md:p-8 rounded-ux border border-slate-200 shadow-xl shadow-slate-200/40">
